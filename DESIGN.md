@@ -8,26 +8,7 @@
 - 하드코딩된 문제 금지
 - 법률 전문가 검수 후 문제 등록
 - AI가 생성한 문제 사용 시 반드시 검증 필요
-- 법령용어는 국가법령정보센터 API에서 수집
-
-## 수집 에이전트
-
-### 법령용어 수집 에이전트
-- **스크립트**: `scripts/collect_legal_terms.py`
-- **API**: 국가법령정보센터 OPEN API
-- **용도**: 법률 용어 키워드 수집
-
-#### 사용법
-```bash
-cd word-game
-python scripts/collect_legal_terms.py
-```
-
-#### API 정보
-- **URL**: http://www.law.go.kr/DRF/lawSearch.do
-- **target**: lstrm (법령용어)
-- **인증값**: test (개발용)
-- **문서**: https://open.law.go.kr/LSO/openApi/guideResult.do?htmlName=lsTrmListGuide
+- 법령용어 수집은 `LAWDB.MD` 참조
 
 ---
 
