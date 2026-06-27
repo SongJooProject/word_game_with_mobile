@@ -35,10 +35,29 @@
                 <div class="progress-bar" id="progress-bar"></div>
             </div>
 
-            <div class="game-area" id="game-area">
+            <div class="game-type-selector" id="game-type-selector">
+                <h3>문제 유형 선택</h3>
+                <div class="type-buttons">
+                    <button class="type-btn" onclick="selectGameType('ox')">
+                        <span class="type-icon">O/X</span>
+                        <span class="type-label">OX 문제</span>
+                    </button>
+                    <button class="type-btn" onclick="selectGameType('blank')">
+                        <span class="type-icon">__</span>
+                        <span class="type-label">빈칸 채우기</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="game-area" id="game-area" style="display:none;">
                 <div class="question-card" id="question-card">
                     <div class="sentence" id="sentence"></div>
                     <div class="hint" id="hint"></div>
+                    
+                    <div class="ox-buttons" id="ox-buttons" style="display:none;">
+                        <button class="ox-btn o-btn" onclick="checkOX(true)">O</button>
+                        <button class="ox-btn x-btn" onclick="checkOX(false)">X</button>
+                    </div>
                     
                     <div class="inputs" id="inputs"></div>
                     
@@ -51,7 +70,7 @@
                 </div>
             </div>
 
-            <div class="controls">
+            <div class="controls" id="controls">
                 <button class="btn-start" onclick="startGame()">게임 시작</button>
             </div>
 
@@ -98,7 +117,14 @@
         const questionsData = {
             "civil": {
                 "title": "민법",
-                "sentences": [
+                "ox": [
+                    { "statement": "민법상 청약은 계약의 성립요건 중 하나이다.", "answer": true, "hint": "계약 체결 과정" },
+                    { "statement": "민법상 착오는 의사표시의 하자에 해당하지 않는다.", "answer": false, "hint": "의사표시 관련" },
+                    { "statement": "민법상 후견인은 법정대리인의 한 종류이다.", "answer": true, "hint": "법정대리인" },
+                    { "statement": "민법상 소멸시효의 완성요건은 불행사이다.", "answer": true, "hint": "시효 관련" },
+                    { "statement": "민법상 물권행위는 물권의 변경을 목적으로 한다.", "answer": true, "hint": "물권 관련" }
+                ],
+                "blank": [
                     { "template": "민법상 __은 계약의 성립요건 중 하나입니다.", "blanks": ["청약"], "hint": "계약 체결 과정" },
                     { "template": "__은 의사표시의 하자에 해당합니다.", "blanks": ["착오"], "hint": "의사표시 관련" },
                     { "template": "민법상 __은 법정대리인의 한 종류입니다.", "blanks": ["후견인"], "hint": "법정대리인" },
@@ -108,7 +134,14 @@
             },
             "admin": {
                 "title": "행정법",
-                "sentences": [
+                "ox": [
+                    { "statement": "행정법상 법률유보는 행정의 기본원칙 중 하나이다.", "answer": true, "hint": "행정법 원칙" },
+                    { "statement": "행정심판의 종류에는 취소심판이 포함된다.", "answer": true, "hint": "행정심판" },
+                    { "statement": "행정법상 취소는 위법한 행정행위를 무효화한다.", "answer": false, "hint": "행정행위 효력" },
+                    { "statement": "조례는 행정입법의 한 형태이다.", "answer": true, "hint": "행정입법" },
+                    { "statement": "행정법상 성실의무는 공무원의 의무가 아니다.", "answer": false, "hint": "공무원 의무" }
+                ],
+                "blank": [
                     { "template": "__은 행정의 기본원칙 중 하나입니다.", "blanks": ["법률유보"], "hint": "행정법 원칙" },
                     { "template": "__은 행정심판의 종류 중 하나입니다.", "blanks": ["취소심판"], "hint": "행정심판" },
                     { "template": "행정법상 __은 위법한 행정행위를 취소합니다.", "blanks": ["취소"], "hint": "행정행위 효력" },
@@ -118,7 +151,14 @@
             },
             "criminal": {
                 "title": "형법",
-                "sentences": [
+                "ox": [
+                    { "statement": "형법상 고의는 범죄의 주관적 요소이다.", "answer": true, "hint": "범죄 요소" },
+                    { "statement": "정상감경은 형사상 책임을 감면하는 사유가 아니다.", "answer": false, "hint": "책임 감면" },
+                    { "statement": "형법상 위법행위는 범죄의 객관적 요소이다.", "answer": true, "hint": "범죄 요소" },
+                    { "statement": "벌금은 형벌의 종류 중 하나이다.", "answer": true, "hint": "형벌 종류" },
+                    { "statement": "형법상 자수는 범죄 성립 후 자백 등이다.", "answer": true, "hint": "형량 감경" }
+                ],
+                "blank": [
                     { "template": "형법상 __은 범죄의 주관적 요소입니다.", "blanks": ["고의"], "hint": "범죄 요소" },
                     { "template": "__은 형사상 책임을 감면하는 사유입니다.", "blanks": ["정상감경"], "hint": "책임 감면" },
                     { "template": "형법상 __은 범죄의 객관적 요소입니다.", "blanks": ["위법행위"], "hint": "범죄 요소" },
@@ -128,7 +168,14 @@
             },
             "commercial": {
                 "title": "상법",
-                "sentences": [
+                "ox": [
+                    { "statement": "상법상 상인은 상행위의 주체이다.", "answer": true, "hint": "상행위 관련" },
+                    { "statement": "주식회사는 상법상 유한책임의 형태가 아니다.", "answer": false, "hint": "회사 형태" },
+                    { "statement": "상법상 상표의 보호기간은 10년이다.", "answer": true, "hint": "상표권" },
+                    { "statement": "보험료는 상법상 보험계약의 구성요소이다.", "answer": true, "hint": "보험계약" },
+                    { "statement": "선하증권은 상법상 화물운송의 담보이다.", "answer": true, "hint": "운송서류" }
+                ],
+                "blank": [
                     { "template": "상법상 __은 상행위의 주체입니다.", "blanks": ["상인"], "hint": "상행위 관련" },
                     { "template": "__은 상법상 유한책임의 형태입니다.", "blanks": ["주식회사"], "hint": "회사 형태" },
                     { "template": "상법상 __은 상표의 보호기간입니다.", "blanks": ["10년"], "hint": "상표권" },
@@ -138,7 +185,14 @@
             },
             "labor": {
                 "title": "노동법",
-                "sentences": [
+                "ox": [
+                    { "statement": "노동법상 단결권은 근로자의 기본적 권리이다.", "answer": true, "hint": "근로자 권리" },
+                    { "statement": "유급휴일은 근로기준법상 휴일의 종류가 아니다.", "answer": false, "hint": "휴일 종류" },
+                    { "statement": "노동법상 기간의정근로계약은 근로계약의 형태이다.", "answer": true, "hint": "근로계약" },
+                    { "statement": "실업급여는 고용보험의 급여종류 중 하나이다.", "answer": true, "hint": "고용보험" },
+                    { "statement": "치료급여는 노동법상 산업재해보상보험의 급여이다.", "answer": true, "hint": "산재보험" }
+                ],
+                "blank": [
                     { "template": "노동법상 __은 근로자의 기본적 권리입니다.", "blanks": ["단결권"], "hint": "근로자 권리" },
                     { "template": "__은 근로기준법상 휴일의 종류입니다.", "blanks": ["유급휴일"], "hint": "휴일 종류" },
                     { "template": "노동법상 __은 근로계약의 형태입니다.", "blanks": ["기간의정근로계약"], "hint": "근로계약" },
@@ -148,7 +202,14 @@
             },
             "constitution": {
                 "title": "헌법",
-                "sentences": [
+                "ox": [
+                    { "statement": "헌법상 평등권은 국민의 기본권이다.", "answer": true, "hint": "기본권" },
+                    { "statement": "기본권보장은 헌법상 기본적 인권의 보장원칙이 아니다.", "answer": false, "hint": "헌법 원칙" },
+                    { "statement": "헌법상 국회의원은 국회를 구성한다.", "answer": true, "hint": "입법부" },
+                    { "statement": "법률공포권은 헌법상 대통령의 권한이다.", "answer": true, "hint": "대통령 권한" },
+                    { "statement": "헌법상 사법독립은 사법부의 독립을 보장한다.", "answer": true, "hint": "사법부" }
+                ],
+                "blank": [
                     { "template": "헌법상 __은 국민의 기본권입니다.", "blanks": ["평등권"], "hint": "기본권" },
                     { "template": "__은 헌법상 기본적 인권의 보장원칙입니다.", "blanks": ["기본권보장"], "hint": "헌법 원칙" },
                     { "template": "헌법상 __은 국회를 구성합니다.", "blanks": ["국회의원"], "hint": "입법부" },
