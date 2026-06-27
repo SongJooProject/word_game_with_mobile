@@ -224,12 +224,24 @@ body {
     }
 }
 
+.question-title {
+    font-size: 1.1em;
+    color: #667eea;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
 .sentence {
-    font-size: 1.4em;
+    font-size: 1.3em;
     color: #1f2937;
     line-height: 2;
     margin-bottom: 20px;
     text-align: center;
+    background: #f9fafb;
+    padding: 25px;
+    border-radius: 15px;
+    border-left: 4px solid #667eea;
 }
 
 .hint {

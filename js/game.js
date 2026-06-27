@@ -26,11 +26,12 @@ function selectTopic(topic) {
     });
     document.querySelector(`[data-topic="${topic}"]`).classList.add('active');
     
-    document.getElementById('topic-title').textContent = questionsData[topic].title;
+    if (questionsData && questionsData[topic]) {
+        document.getElementById('topic-title').textContent = questionsData[topic].title;
+    }
     score = 0;
     document.getElementById('score').textContent = score;
     
-    // 모바일에서 사이드바 닫기
     document.getElementById('sidebar').classList.remove('open');
 }
 
@@ -44,11 +45,24 @@ function selectGameType(type) {
 }
 
 function startGame() {
+    if (!questionsData) {
+        alert('문제가 로딩되지 않았습니다. 페이지를 새로고침해주세요.');
+        return;
+    }
+    
     const data = questionsData[currentTopic];
     
     if (gameType === 'ox') {
+        if (!data.ox || data.ox.length === 0) {
+            alert('OX 문제가 없습니다.');
+            return;
+        }
         questions = shuffleArray(data.ox).slice(0, 5);
     } else {
+        if (!data.blank || data.blank.length === 0) {
+            alert('빈칸 문제가 없습니다.');
+            return;
+        }
         questions = shuffleArray(data.blank).slice(0, 5);
     }
     
@@ -61,12 +75,10 @@ function startGame() {
     document.getElementById('score').textContent = score;
     document.getElementById('total').textContent = questions.length;
     
-    // 타이머 시작
     startTime = Date.now();
     if (timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(updateTimer, 1000);
     
-    // UI 전환
     document.getElementById('game-type-selector').style.display = 'none';
     document.getElementById('game-area').style.display = 'flex';
     document.getElementById('controls').style.display = 'none';
@@ -94,6 +106,7 @@ function showQuestion() {
     }
     
     const q = questions[currentQuestion];
+    const titleEl = document.getElementById('question-title');
     const sentenceEl = document.getElementById('sentence');
     const hintEl = document.getElementById('hint');
     const oxButtonsEl = document.getElementById('ox-buttons');
@@ -104,18 +117,19 @@ function showQuestion() {
     document.getElementById('question-num').textContent = currentQuestion + 1;
     
     if (gameType === 'ox') {
-        // OX 문제
+        titleEl.textContent = '';
         sentenceEl.textContent = q.statement;
         hintEl.textContent = `힌트: ${q.hint}`;
         oxButtonsEl.style.display = 'flex';
         inputsEl.style.display = 'none';
         document.getElementById('submit-btn').style.display = 'none';
     } else {
-        // 빈칸 채우기 문제
-        let sentenceHtml = q.template;
-        q.blanks.forEach((_, i) => {
-            sentenceHtml = sentenceHtml.replace('__', `<span class="blank" data-index="${i}">______</span>`);
-        });
+        titleEl.textContent = q.title || '';
+        let sentenceHtml = q.paragraph || q.template;
+        const blankCount = (sentenceHtml.match(/__/g) || []).length;
+        for (let i = 0; i < blankCount; i++) {
+            sentenceHtml = sentenceHtml.replace('__', `<span class="blank" data-index="${i}">(${i + 1})</span>`);
+        }
         sentenceEl.innerHTML = sentenceHtml;
         hintEl.textContent = `힌트: ${q.hint}`;
         oxButtonsEl.style.display = 'none';
@@ -137,7 +151,6 @@ function showQuestion() {
     
     document.getElementById('next-btn').style.display = 'none';
     
-    // 문제 카드 애니메이션
     const card = document.getElementById('question-card');
     card.style.animation = 'none';
     card.offsetHeight;
@@ -146,7 +159,8 @@ function showQuestion() {
     updateProgress();
     
     if (gameType === 'blank') {
-        document.getElementById('answer-0').focus();
+        const firstInput = document.getElementById('answer-0');
+        if (firstInput) firstInput.focus();
     }
 }
 
@@ -170,7 +184,6 @@ function checkOX(userAnswer) {
     document.getElementById('ox-buttons').style.display = 'none';
     document.getElementById('next-btn').style.display = 'inline-block';
     
-    // 점수 애니메이션
     const scoreEl = document.getElementById('score');
     scoreEl.classList.add('animate');
     setTimeout(() => scoreEl.classList.remove('animate'), 500);
@@ -184,6 +197,8 @@ function checkAnswer() {
     
     q.blanks.forEach((correctAnswer, i) => {
         const input = document.getElementById(`answer-${i}`);
+        if (!input) return;
+        
         const userAnswer = input.value.trim();
         const blankEl = document.querySelector(`.blank[data-index="${i}"]`);
         
@@ -191,13 +206,16 @@ function checkAnswer() {
             correctCount++;
             input.classList.add('correct');
             input.classList.remove('wrong');
-            blankEl.style.color = '#10b981';
-            blankEl.textContent = correctAnswer;
+            if (blankEl) {
+                blankEl.style.color = '#10b981';
+                blankEl.textContent = correctAnswer;
+            }
         } else {
             input.classList.add('wrong');
             input.classList.remove('correct');
-            blankEl.style.color = '#ef4444';
-            blankEl.textContent = userAnswer || '(미입력)';
+            if (blankEl) {
+                blankEl.style.color = '#ef4444';
+            }
         }
     });
     
@@ -210,7 +228,6 @@ function checkAnswer() {
         document.getElementById('submit-btn').style.display = 'none';
         document.getElementById('next-btn').style.display = 'inline-block';
         
-        // 점수 애니메이션
         const scoreEl = document.getElementById('score');
         scoreEl.classList.add('animate');
         setTimeout(() => scoreEl.classList.remove('animate'), 500);
@@ -218,10 +235,19 @@ function checkAnswer() {
         attemptCount++;
         if (attemptCount >= 5) {
             wrongAnswers++;
-            messageEl.textContent = `5번 틀렸습니다. 정답: ${q.blanks.join(', ')}`;
+            const correctText = q.blanks.join(', ');
+            messageEl.textContent = `5번 틀렸습니다. 정답: ${correctText}`;
             messageEl.className = 'message wrong';
             document.getElementById('submit-btn').style.display = 'none';
             document.getElementById('next-btn').style.display = 'inline-block';
+            
+            q.blanks.forEach((correctAnswer, i) => {
+                const blankEl = document.querySelector(`.blank[data-index="${i}"]`);
+                if (blankEl) {
+                    blankEl.style.color = '#10b981';
+                    blankEl.textContent = correctAnswer;
+                }
+            });
         } else {
             messageEl.textContent = `틀렸습니다. (${attemptCount}/5)`;
             messageEl.className = 'message wrong';
@@ -266,19 +292,16 @@ function restartGame() {
     document.getElementById('progress-bar').style.width = '0%';
 }
 
-// 사이드바 토글 (모바일)
 document.getElementById('menu-toggle').addEventListener('click', () => {
     document.getElementById('sidebar').classList.toggle('open');
 });
 
-// 주제 선택 이벤트
 document.querySelectorAll('.topic-item').forEach(item => {
     item.addEventListener('click', () => {
         selectTopic(item.dataset.topic);
     });
 });
 
-// 키보드 네비게이션
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
         const submitBtn = document.getElementById('submit-btn');
@@ -296,5 +319,7 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// 초기 로드
-selectTopic('civil');
+window.addEventListener('load', async () => {
+    await loadQuestions();
+    selectTopic('civil');
+});
