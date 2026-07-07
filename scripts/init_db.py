@@ -29,7 +29,7 @@ cursor.execute("""
 """)
 
 # 형사소송법 주제 추가
-cursor.execute("INSERT OR IGNORE INTO subjects (name, description) VALUES (?, ?)", 
+cursor.execute("INSERT OR IGNORE INTO subjects (name, description) VALUES (?, ?)",
                ("형사소송법", "형사소송에 관한 법률"))
 cursor.execute("SELECT id FROM subjects WHERE name = ?", ("형사소송법",))
 subject_id = cursor.fetchone()[0]

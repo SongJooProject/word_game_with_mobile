@@ -47,10 +47,10 @@ def create_ox_from_article(article_no, title, content):
     """조문 내용에서 OX 문제 생성"""
     questions = []
     content = clean_content(content)
-    
+
     if len(content) < 30:
         return questions
-    
+
     # 패턴 1: 제목 확인 문제
     if title:
         questions.append({
@@ -60,7 +60,7 @@ def create_ox_from_article(article_no, title, content):
             "article": article_no,
             "type": "title"
         })
-    
+
     # 패턴 2: "~한다" 문장 → O 문제
     if "한다" in content:
         sentences = content.split(".")
@@ -74,7 +74,7 @@ def create_ox_from_article(article_no, title, content):
                     "type": "content_o"
                 })
                 break
-    
+
     # 패턴 3: "~할 수 없다" 문장 → X 문제
     if "할 수 없다" in content or "하지 아니한다" in content:
         questions.append({
@@ -84,7 +84,7 @@ def create_ox_from_article(article_no, title, content):
             "article": article_no,
             "type": "content_x"
         })
-    
+
     # 패턴 4: 시간/기간 정보 → O 문제
     time_match = re.search(r'(\d+일|\d+시간|\d+개월|\d+년)', content)
     if time_match:
@@ -96,7 +96,7 @@ def create_ox_from_article(article_no, title, content):
             "article": article_no,
             "type": "time_o"
         })
-    
+
     return questions
 
 
@@ -104,35 +104,35 @@ def main():
     print("=" * 60)
     print("형사소송법 OX 문제 생성")
     print("=" * 60)
-    
+
     articles = load_articles()
     print(f"\n조문 수: {len(articles)}개")
-    
+
     all_questions = []
-    
+
     for article_no, title, content in articles:
         qs = create_ox_from_article(article_no, title, content)
         all_questions.extend(qs)
-    
+
     # 랜덤 셔플
     random.shuffle(all_questions)
-    
+
     # 30개로 제한
     questions = all_questions[:30]
-    
+
     print(f"생성된 문제: {len(questions)}개")
-    
+
     output = {
         "subject": "형사소송법",
         "type": "ox",
         "questions": questions
     }
-    
+
     with open("data/ox_questions.json", "w", encoding="utf-8") as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
-    
-    print(f"\n저장 완료: data/ox_questions.json")
-    
+
+    print("\n저장 완료: data/ox_questions.json")
+
     print("\n[샘플 문제]")
     for q in questions[:5]:
         print(f"  Q: {q['question'][:80]}...")

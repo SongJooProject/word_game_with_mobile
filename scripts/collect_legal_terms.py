@@ -11,9 +11,9 @@ from typing import Optional
 
 class LegalTermCollector:
     """법령용어 수집 클래스"""
-    
+
     BASE_URL = "http://www.law.go.kr/DRF/lawSearch.do"
-    
+
     def __init__(self, oc_id: str = "test"):
         """
         초기화
@@ -23,7 +23,7 @@ class LegalTermCollector:
         """
         self.oc_id = oc_id
         self.session = requests.Session()
-    
+
     def fetch_terms(
         self,
         query: Optional[str] = None,
@@ -52,14 +52,14 @@ class LegalTermCollector:
             "display": display,
             "page": page
         }
-        
+
         if query:
             params["query"] = query
         if gana:
             params["gana"] = gana
         if dic_knd_cd:
             params["dicKndCd"] = dic_knd_cd
-        
+
         try:
             response = self.session.get(self.BASE_URL, params=params, timeout=10)
             response.raise_for_status()
@@ -67,7 +67,7 @@ class LegalTermCollector:
         except requests.RequestException as e:
             print(f"API 요청 실패: {e}")
             return {}
-    
+
     def fetch_term_detail(self, query: str) -> dict:
         """
         법령용어 본문 조회
@@ -85,7 +85,7 @@ class LegalTermCollector:
             "type": "JSON",
             "query": query
         }
-        
+
         try:
             response = self.session.get(url, params=params, timeout=10)
             response.raise_for_status()
@@ -93,7 +93,7 @@ class LegalTermCollector:
         except requests.RequestException as e:
             print(f"API 요청 실패: {e}")
             return {}
-    
+
     def collect_all_terms(self, max_pages: int = 10) -> list:
         """
         모든 법령용어 수집
@@ -105,23 +105,23 @@ class LegalTermCollector:
             법령용어 목록
         """
         all_terms = []
-        
+
         for page in range(1, max_pages + 1):
             print(f"페이지 {page} 수집 중...")
             data = self.fetch_terms(display=100, page=page)
-            
+
             if not data or "LawSearch" not in data:
                 break
-            
+
             terms = data["LawSearch"].get("law", [])
             if not terms:
                 break
-            
+
             all_terms.extend(terms)
             time.sleep(0.5)  # API 부하 방지
-        
+
         return all_terms
-    
+
     def search_by_keyword(self, keyword: str) -> list:
         """
         키워드로 법령용어 검색
@@ -133,10 +133,10 @@ class LegalTermCollector:
             검색 결과 목록
         """
         data = self.fetch_terms(query=keyword, display=100)
-        
+
         if not data or "LawSearch" not in data:
             return []
-        
+
         return data["LawSearch"].get("law", [])
 
 
@@ -150,13 +150,13 @@ def collect_for_game(keywords: list, output_file: str = "data/legal_terms.json")
     """
     collector = LegalTermCollector()
     all_terms = []
-    
+
     for keyword in keywords:
         print(f"'{keyword}' 검색 중...")
         terms = collector.search_by_keyword(keyword)
         all_terms.extend(terms)
         time.sleep(1)
-    
+
     # 중복 제거
     unique_terms = {}
     for term in all_terms:
@@ -167,12 +167,12 @@ def collect_for_game(keywords: list, output_file: str = "data/legal_terms.json")
                 "definition": term.get("법령용어상세검색", ""),
                 "category": term.get("법령종류코드", "")
             }
-    
+
     result = list(unique_terms.values())
-    
+
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
-    
+
     print(f"총 {len(result)}개 법령용어 저장 완료: {output_file}")
     return result
 
@@ -187,5 +187,5 @@ if __name__ == "__main__":
         "근로계약", "해고", "산재", "고용보험",
         "기본권", "헌법", "국회", "대통령"
     ]
-    
+
     collect_for_game(keywords)

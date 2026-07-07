@@ -1,5 +1,4 @@
 import requests
-import json
 
 # 두 개의 MST로 법령 조회
 for mst in ['222287', '280441']:
@@ -11,12 +10,12 @@ for mst in ['222287', '280441']:
     })
     r.encoding = 'utf-8'
     data = r.json()
-    
+
     law = data.get('법령', {})
     basic = law.get('기본정보', {})
     name = basic.get('법령명_한글', 'N/A')
     articles = law.get('조문', {}).get('조문단위', [])
-    
+
     print(f"\n=== MST: {mst} ===")
     print(f"법령명: {name}")
     print(f"조문수: {len(articles)}개")

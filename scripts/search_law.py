@@ -1,5 +1,4 @@
 import requests
-import json
 
 r = requests.get('http://www.law.go.kr/DRF/lawSearch.do', params={
     'OC': 'skagurwn',

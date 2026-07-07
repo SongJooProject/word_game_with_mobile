@@ -2,9 +2,9 @@ import requests
 import json
 
 r = requests.get('http://www.law.go.kr/DRF/lawService.do', params={
-    'OC': 'skagurwn', 
-    'target': 'law', 
-    'type': 'JSON', 
+    'OC': 'skagurwn',
+    'target': 'law',
+    'type': 'JSON',
     'MST': '222287'
 })
 r.encoding = 'utf-8'
