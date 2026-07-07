@@ -42,17 +42,29 @@ python scripts/auto_test.py
 ## 프로젝트 구조
 ```
 word-game/
-├── AGENTS.md
-├── pyproject.toml
-├── src/
-│   └── word_game/
-│       ├── __init__.py
-│       └── main.py
-├── tests/
-│   └── __init__.py
+├── AGENTS.md          # 프로젝트 가이드라인
+├── DESIGN.MD          # UI/UX 디자인 가이드라인
+├── LAWDB.MD           # 법령용어 DB 관리 규칙
+├── index.html         # 메인 페이지
+├── css/
+│   └── style.css      # 스타일 시트
+├── js/
+│   └── game.js        # 게임 로직
 ├── data/
-│   └── words.json
-└── docs/
+│   ├── questions.json # 문제 데이터 (엑셀에서 변환)
+│   ├── keywords.json  # 키워드 데이터
+│   └── words.json     # 단어 데이터
+├── db/
+│   ├── DB.xlsx        # 문제 엑셀 파일
+│   ├── legal_terms.db # SQLite 데이터베이스
+│   └── schema.sql     # DB 스키마
+├── scripts/
+│   ├── auto_test.py   # 자동 테스트
+│   ├── convert_excel_to_json.py  # 엑셀→JSON 변환
+│   ├── collect_law_text.py       # 법령 본문 수집
+│   └── self_test_v2.py           # 셀프테스트
+└── tests/
+    └── __init__.py
 ```
 
 ## 코딩 컨벤션

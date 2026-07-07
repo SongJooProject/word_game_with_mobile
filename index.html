@@ -9,23 +9,23 @@
 <body>
     <div class="app">
         <aside class="sidebar" id="sidebar">
-            <h2>주제 선택</h2>
-            <ul class="topic-list" id="topic-list">
-                <li class="topic-item active" data-topic="civil">민법</li>
-                <li class="topic-item" data-topic="admin">행정법</li>
-                <li class="topic-item" data-topic="criminal">형법</li>
-                <li class="topic-item" data-topic="criminal-procedure">형사소송법</li>
-                <li class="topic-item" data-topic="commercial">상법</li>
-                <li class="topic-item" data-topic="labor">노동법</li>
-                <li class="topic-item" data-topic="constitution">헌법</li>
-            </ul>
+            <h2>과목 선택</h2>
+            <div class="subject-list" id="subject-list">
+                <!-- 동적 생성 -->
+            </div>
         </aside>
 
         <button class="menu-toggle" id="menu-toggle" aria-label="메뉴 열기">☰</button>
 
         <main class="main">
             <header class="header">
-                <h1 id="topic-title">민법</h1>
+                <nav class="breadcrumb" id="breadcrumb">
+                    <span class="crumb" id="crumb-subject"></span>
+                    <span class="separator">›</span>
+                    <span class="crumb" id="crumb-chapter"></span>
+                    <span class="separator">›</span>
+                    <span class="crumb active" id="crumb-section"></span>
+                </nav>
                 <div class="score-board">
                     <span>점수: <strong id="score">0</strong></span>
                     <span>문제: <strong id="question-num">0</strong> / <strong id="total">0</strong></span>
@@ -36,30 +36,44 @@
                 <div class="progress-bar" id="progress-bar"></div>
             </div>
 
-            <div class="game-type-selector" id="game-type-selector">
+            <div class="menu-area" id="menu-area">
+                <div class="menu-level" id="menu-level-chapter">
+                    <h3>과목을 선택하세요</h3>
+                    <div class="menu-items" id="chapter-list"></div>
+                </div>
+                <div class="menu-level" id="menu-level-section" style="display:none;">
+                    <h3>세부 항목 선택</h3>
+                    <div class="menu-items" id="section-list"></div>
+                </div>
+            </div>
+
+            <div class="game-type-selector" id="game-type-selector" style="display:none;">
                 <h3>문제 유형 선택</h3>
                 <div class="type-buttons">
-                    <button class="type-btn" onclick="selectGameType('ox')">
-                        <span class="type-icon">O/X</span>
-                        <span class="type-label">OX 문제</span>
+                    <button class="type-btn selected" onclick="selectGameType('type1')">
+                        <span class="type-icon">①②③</span>
+                        <span class="type-label">선택형</span>
                     </button>
-                    <button class="type-btn" onclick="selectGameType('blank')">
+                    <button class="type-btn" onclick="selectGameType('type2')">
                         <span class="type-icon">__</span>
-                        <span class="type-label">빈칸 채우기</span>
+                        <span class="type-label">빈칸형</span>
+                    </button>
+                    <button class="type-btn" onclick="selectGameType('all')">
+                        <span class="type-icon">ALL</span>
+                        <span class="type-label">전체</span>
                     </button>
                 </div>
+                <button class="btn-start" onclick="startGame()">게임 시작</button>
             </div>
 
             <div class="game-area" id="game-area" style="display:none;">
                 <div class="question-card" id="question-card">
-                    <div class="question-title" id="question-title"></div>
+                    <div class="question-header">
+                        <span class="question-num" id="question-num-display"></span>
+                        <span class="question-type" id="question-type-display"></span>
+                    </div>
                     <div class="sentence" id="sentence"></div>
                     <div class="hint" id="hint"></div>
-                    
-                    <div class="ox-buttons" id="ox-buttons" style="display:none;">
-                        <button class="ox-btn o-btn" onclick="checkOX(true)">O</button>
-                        <button class="ox-btn x-btn" onclick="checkOX(false)">X</button>
-                    </div>
                     
                     <div class="inputs" id="inputs"></div>
                     
@@ -72,8 +86,8 @@
                 </div>
             </div>
 
-            <div class="controls" id="controls">
-                <button class="btn-start" onclick="startGame()">게임 시작</button>
+            <div class="controls" id="controls" style="display:none;">
+                <button class="btn-back" onclick="goBack()">← 뒤로</button>
             </div>
 
             <div class="stats" id="stats" style="display:none;">
@@ -124,7 +138,7 @@
                 questionsData = await response.json();
             } catch (e) {
                 console.error('문제 로딩 실패:', e);
-                alert('문제 파일을 불러올 수 없습니다. data/questions.json 파일을 확인해주세요.');
+                alert('문제 파일을 불러올 수 없습니다.');
             }
         }
     </script>
