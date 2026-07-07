@@ -10,45 +10,31 @@
     <div class="app">
         <aside class="sidebar" id="sidebar">
             <h2>과목 선택</h2>
-            <div class="subject-list" id="subject-list">
-                <!-- 동적 생성 -->
-            </div>
+            <div class="subject-list" id="subject-list"></div>
         </aside>
 
         <button class="menu-toggle" id="menu-toggle" aria-label="메뉴 열기">☰</button>
 
         <main class="main">
             <header class="header">
-                <nav class="breadcrumb" id="breadcrumb">
-                    <span class="crumb" id="crumb-subject"></span>
-                    <span class="separator">›</span>
-                    <span class="crumb" id="crumb-chapter"></span>
-                    <span class="separator">›</span>
-                    <span class="crumb active" id="crumb-section"></span>
-                </nav>
+                <h1 id="page-title">형사소송법</h1>
                 <div class="score-board">
                     <span>점수: <strong id="score">0</strong></span>
                     <span>문제: <strong id="question-num">0</strong> / <strong id="total">0</strong></span>
                 </div>
             </header>
 
-            <div class="progress-container">
+            <div class="progress-container" id="progress-container" style="display:none;">
                 <div class="progress-bar" id="progress-bar"></div>
             </div>
 
-            <div class="menu-area" id="menu-area">
-                <div class="menu-level" id="menu-level-chapter">
-                    <h3>과목을 선택하세요</h3>
-                    <div class="menu-items" id="chapter-list"></div>
-                </div>
-                <div class="menu-level" id="menu-level-section" style="display:none;">
-                    <h3>세부 항목 선택</h3>
-                    <div class="menu-items" id="section-list"></div>
-                </div>
+            <!-- 한 페이지 메뉴 -->
+            <div class="single-page-menu" id="single-page-menu">
+                <div class="chapter-section" id="chapter-section"></div>
             </div>
 
+            <!-- 게임 유형 선택 -->
             <div class="game-type-selector" id="game-type-selector" style="display:none;">
-                <h3>문제 유형 선택</h3>
                 <div class="type-buttons">
                     <button class="type-btn selected" onclick="selectGameType('type1')">
                         <span class="type-icon">①②③</span>
@@ -63,9 +49,12 @@
                         <span class="type-label">전체</span>
                     </button>
                 </div>
+                <div class="selected-info" id="selected-info"></div>
                 <button class="btn-start" onclick="startGame()">게임 시작</button>
+                <button class="btn-back-small" onclick="backToMenu()">메뉴로 돌아가기</button>
             </div>
 
+            <!-- 게임 영역 -->
             <div class="game-area" id="game-area" style="display:none;">
                 <div class="question-card" id="question-card">
                     <div class="question-header">
@@ -74,24 +63,17 @@
                     </div>
                     <div class="sentence" id="sentence"></div>
                     <div class="hint" id="hint"></div>
-                    
                     <div class="inputs" id="inputs"></div>
-                    
                     <div class="buttons">
                         <button id="submit-btn" class="btn-primary" onclick="checkAnswer()">정답 확인</button>
                         <button id="next-btn" class="btn-secondary" onclick="nextQuestion()" style="display:none;">다음 문제</button>
                     </div>
-                    
                     <div class="message" id="message"></div>
                 </div>
             </div>
 
-            <div class="controls" id="controls" style="display:none;">
-                <button class="btn-back" onclick="goBack()">← 뒤로</button>
-            </div>
-
+            <!-- 통계 -->
             <div class="stats" id="stats" style="display:none;">
-                <h3>통계</h3>
                 <div class="stat-item">
                     <span>정답률:</span>
                     <strong id="accuracy">0%</strong>
@@ -104,6 +86,7 @@
         </main>
     </div>
 
+    <!-- 결과 모달 -->
     <div class="result-modal" id="result-modal" style="display:none;">
         <div class="result-content">
             <h2>게임 종료!</h2>

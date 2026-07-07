@@ -45,15 +45,15 @@ with open("index.html", "r", encoding="utf-8") as f:
     html = f.read()
 
 checks = [
-    ("breadcrumb", "빵 부스러기"),
-    ("menu-level-chapter", "챕터 메뉴"),
-    ("menu-level-section", "섹션 메뉴"),
+    ("single-page-menu", "메뉴 영역"),
+    ("chapter-section", "챕터 섹션"),
     ("game-type-selector", "게임 유형 선택"),
     ("type1", "선택형 버튼"),
     ("type2", "빈칸형 버튼"),
     ("all", "전체 버튼"),
     ("btn-start", "시작 버튼"),
-    ("btn-back", "뒤로 버튼"),
+    ("game-area", "게임 영역"),
+    ("question-card", "문제 카드"),
 ]
 
 for check_id, desc in checks:
@@ -68,9 +68,7 @@ with open("js/game.js", "r", encoding="utf-8") as f:
 js_checks = [
     ("renderSubjectList", "과목 목록 렌더링"),
     ("selectSubject", "과목 선택"),
-    ("renderChapterList", "챕터 목록 렌더링"),
-    ("selectChapter", "챕터 선택"),
-    ("renderSectionList", "섹션 목록 렌더링"),
+    ("renderMenu", "메뉴 렌더링"),
     ("selectSection", "섹션 선택"),
     ("selectGameType", "게임 유형 선택"),
     ("startGame", "게임 시작"),
@@ -78,8 +76,7 @@ js_checks = [
     ("checkType1Answer", "선택형 답 확인"),
     ("checkAnswer", "빈칸형 답 확인"),
     ("nextQuestion", "다음 문제"),
-    ("goBack", "뒤로 가기"),
-    ("navigationState", "네비게이션 상태"),
+    ("backToMenu", "메뉴로 돌아가기"),
 ]
 
 for func_name, desc in js_checks:
@@ -92,12 +89,12 @@ with open("css/style.css", "r", encoding="utf-8") as f:
     css = f.read()
 
 css_checks = [
-    ("breadcrumb", "빵 부스러기 스타일"),
-    ("menu-level", "메뉴 레벨 스타일"),
-    ("menu-item", "메뉴 아이템 스타일"),
+    ("chapter-block", "챕터 블록 스타일"),
+    ("chapter-header", "챕터 헤더 스타일"),
+    ("section-list", "섹션 목록 스타일"),
+    ("section-btn", "섹션 버튼 스타일"),
     ("option-btn", "선택형 버튼 스타일"),
-    ("chapter-item", "챕터 아이템 스타일"),
-    ("section-item", "섹션 아이템 스타일"),
+    ("single-page-menu", "메뉴 영역 스타일"),
 ]
 
 for check_class, desc in css_checks:
