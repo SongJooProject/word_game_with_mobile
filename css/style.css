@@ -70,11 +70,15 @@ body {
 }
 
 .no-data {
-    color: #9ca3af;
+    color: white;
     text-align: center;
-    padding: 20px;
-    font-style: italic;
-    font-size: 0.9em;
+    padding: 60px 40px;
+    font-size: 1.8em;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    margin: 40px;
 }
 
 /* Menu Toggle */
@@ -157,7 +161,8 @@ body {
 
 .chapter-header h3 {
     color: #667eea;
-    font-size: 1.1em;
+    font-size: 1.3em;
+    font-weight: bold;
 }
 
 .section-list {
@@ -167,14 +172,15 @@ body {
 }
 
 .section-btn {
-    padding: 8px 15px;
+    padding: 10px 18px;
     background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
     border: 2px solid transparent;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 0.9em;
+    font-size: 1em;
     color: #1f2937;
+    font-weight: 500;
 }
 
 .section-btn:hover {
