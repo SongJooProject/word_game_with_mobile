@@ -120,7 +120,11 @@ class AutoTester:
             self.log("JSON 파싱", True)
 
             # 주제 존재 검증
-            required_topics = ["civil", "admin", "criminal", "criminal-procedure", "commercial", "labor", "constitution"]
+            required_topics = [
+                "civil", "admin", "criminal",
+                "criminal-procedure", "commercial",
+                "labor", "constitution",
+            ]
             for topic in required_topics:
                 if topic in data:
                     self.log(f"주제 존재: {topic}", True)
@@ -166,9 +170,12 @@ class AutoTester:
             content = schema_file.read_text(encoding="utf-8")
 
             checks = [
-                ("subjects 테이블", "CREATE TABLE" in content and "subjects" in content),
+                (
+                    "subjects 테이블",
+                    "CREATE TABLE" in content and "subjects" in content,
+                ),
                 ("keywords 테이블", "keywords" in content),
-                ("questions 테이블", "questions" in content)
+                ("questions 테이블", "questions" in content),
             ]
 
             for name, passed in checks:

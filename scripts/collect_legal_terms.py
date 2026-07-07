@@ -17,7 +17,7 @@ class LegalTermCollector:
     def __init__(self, oc_id: str = "test"):
         """
         초기화
-        
+
         Args:
             oc_id: API 인증값 (기본값: test)
         """
@@ -34,14 +34,14 @@ class LegalTermCollector:
     ) -> dict:
         """
         법령용어 목록 조회
-        
+
         Args:
             query: 검색어
             display: 결과 개수 (max=100)
             page: 페이지 번호
             gana: 사전식 검색 (ga, na, da...)
             dic_knd_cd: 법령 종류 코드 (법령: 010101, 행정규칙: 010102)
-            
+
         Returns:
             API 응답 데이터
         """
@@ -71,10 +71,10 @@ class LegalTermCollector:
     def fetch_term_detail(self, query: str) -> dict:
         """
         법령용어 본문 조회
-        
+
         Args:
             query: 법령용어명
-            
+
         Returns:
             상세 데이터
         """
@@ -97,10 +97,10 @@ class LegalTermCollector:
     def collect_all_terms(self, max_pages: int = 10) -> list:
         """
         모든 법령용어 수집
-        
+
         Args:
             max_pages: 최대 페이지 수
-            
+
         Returns:
             법령용어 목록
         """
@@ -125,10 +125,10 @@ class LegalTermCollector:
     def search_by_keyword(self, keyword: str) -> list:
         """
         키워드로 법령용어 검색
-        
+
         Args:
             keyword: 검색 키워드
-            
+
         Returns:
             검색 결과 목록
         """
@@ -143,7 +143,7 @@ class LegalTermCollector:
 def collect_for_game(keywords: list, output_file: str = "data/legal_terms.json"):
     """
     게임용 법령용어 수집
-    
+
     Args:
         keywords: 검색할 키워드 목록
         output_file: 출력 파일 경로

@@ -41,7 +41,10 @@ def extract_keywords():
     conn = sqlite3.connect("db/legal_terms.db")
     cursor = conn.cursor()
 
-    cursor.execute("SELECT article_no, title, content FROM law_articles WHERE law_name LIKE '%형사소송%'")
+    cursor.execute(
+        "SELECT article_no, title, content "
+        "FROM law_articles WHERE law_name LIKE '%형사소송%'"
+    )
     articles = cursor.fetchall()
 
     results = {"A": [], "B": []}

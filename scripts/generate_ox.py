@@ -13,9 +13,9 @@ def load_articles():
     conn = sqlite3.connect("db/legal_terms.db")
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT article_no, title, content 
-        FROM law_articles 
-        WHERE law_name LIKE '%형사소송%' 
+        SELECT article_no, title, content
+        FROM law_articles
+        WHERE law_name LIKE '%형사소송%'
         AND length(content) > 50
     """)
     articles = cursor.fetchall()
@@ -35,10 +35,21 @@ def clean_content(content):
 def extract_key_info(content):
     """조문에서 핵심 정보 추출"""
     info = {
-        "has_time": bool(re.search(r'\d+일|\d+시간|\d+개월|\d+년', content)),
-        "has_person": any(p in content for p in ["검사", "사법경찰관", "피의자", "피고인", "법원", "변호인"]),
-        "has_action": any(a in content for a in ["할 수 있다", "하여야 한다", "하지 아니한다", "할 수 없다"]),
-        "has_condition": any(c in content for c in ["경우", "때에는", "할 때", "条件"]),
+        "has_time": bool(re.search(
+            r'\d+일|\d+시간|\d+개월|\d+년', content
+        )),
+        "has_person": any(
+            p in content
+            for p in ["검사", "사법경찰관", "피의자", "피고인", "법원", "변호인"]
+        ),
+        "has_action": any(
+            a in content
+            for a in ["할 수 있다", "하여야 한다", "하지 아니한다", "할 수 없다"]
+        ),
+        "has_condition": any(
+            c in content
+            for c in ["경우", "때에는", "할 때", "条件"]
+        ),
     }
     return info
 
@@ -67,7 +78,10 @@ def create_ox_from_article(article_no, title, content):
         for sent in sentences:
             if "한다" in sent and len(sent) > 30:
                 questions.append({
-                    "question": f"형사소송법 {article_no}에 따르면 {sent.strip()[:80]}.",
+                    "question": (
+                        f"형사소송법 {article_no}에 따르면 "
+                        f"{sent.strip()[:80]}."
+                    ),
                     "answer": "O",
                     "explanation": "조문 원문에 명시된 내용입니다.",
                     "article": article_no,
@@ -78,7 +92,10 @@ def create_ox_from_article(article_no, title, content):
     # 패턴 3: "~할 수 없다" 문장 → X 문제
     if "할 수 없다" in content or "하지 아니한다" in content:
         questions.append({
-            "question": f"형사소송법 {article_no}에 따르면, 수사기관은 이를 위반할 수 있다.",
+            "question": (
+                f"형사소송법 {article_no}에 따르면, "
+                f"수사기관은 이를 위반할 수 있다."
+            ),
             "answer": "X",
             "explanation": "조문에서 금지하고 있는 행위입니다.",
             "article": article_no,
@@ -90,7 +107,10 @@ def create_ox_from_article(article_no, title, content):
     if time_match:
         time_info = time_match.group(1)
         questions.append({
-            "question": f"형사소송법 {article_no}에 따르면 이는 {time_info} 이내에 이루어져야 한다.",
+            "question": (
+                f"형사소송법 {article_no}에 따르면 "
+                f"이는 {time_info} 이내에 이루어져야 한다."
+            ),
             "answer": "O",
             "explanation": f"조문에 {time_info} 기간이 명시되어 있습니다.",
             "article": article_no,

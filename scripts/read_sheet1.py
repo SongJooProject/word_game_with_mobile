@@ -7,7 +7,10 @@ print(f"Sheet1 전체 행 수: {ws.max_row}")
 print(f"Sheet1 전체 열 수: {ws.max_column}")
 print()
 
-for row_idx, row in enumerate(ws.iter_rows(min_row=1, max_row=ws.max_row, values_only=False), 1):
+for row_idx, row in enumerate(
+    ws.iter_rows(min_row=1, max_row=ws.max_row, values_only=False),
+    1,
+):
     print(f"=== {row_idx}행 ===")
     for cell in row:
         if cell.value is not None:

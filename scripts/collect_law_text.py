@@ -61,10 +61,15 @@ class LawTextCollector:
         saved = 0
         for article in articles:
             cursor.execute("""
-                INSERT OR REPLACE INTO law_articles 
-                (law_name, article_no, title, content) 
+                INSERT OR REPLACE INTO law_articles
+                (law_name, article_no, title, content)
                 VALUES (?, ?, ?, ?)
-            """, (article["law_name"], article["article_no"], article["title"], article["content"]))
+            """, (
+                article["law_name"],
+                article["article_no"],
+                article["title"],
+                article["content"],
+            ))
             saved += 1
 
         conn.commit()

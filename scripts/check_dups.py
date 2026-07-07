@@ -4,7 +4,11 @@ conn = sqlite3.connect("db/legal_terms.db")
 cursor = conn.cursor()
 
 # 중복 조문 확인
-cursor.execute("SELECT article_no, COUNT(*) as cnt FROM law_articles WHERE law_name LIKE '%형사소송%' GROUP BY article_no HAVING cnt > 1 ORDER BY cnt DESC")
+cursor.execute(
+    "SELECT article_no, COUNT(*) as cnt "
+    "FROM law_articles WHERE law_name LIKE '%형사소송%' "
+    "GROUP BY article_no HAVING cnt > 1 ORDER BY cnt DESC"
+)
 dups = cursor.fetchall()
 
 with open("dup_check.txt", "w", encoding="utf-8") as f:
@@ -18,7 +22,11 @@ with open("dup_check.txt", "w", encoding="utf-8") as f:
 
     # 조문별 항 확인
     f.write("\n\n[조문별 항 수 예시]\n")
-    cursor.execute("SELECT article_no, title, content FROM law_articles WHERE article_no = '제200조' AND law_name LIKE '%형사소송%'")
+    cursor.execute(
+        "SELECT article_no, title, content "
+        "FROM law_articles WHERE article_no = '제200조' "
+        "AND law_name LIKE '%형사소송%'"
+    )
     for no, title, content in cursor.fetchall():
         f.write(f"  {no} | {title}\n")
 

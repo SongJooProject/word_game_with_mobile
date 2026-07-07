@@ -30,7 +30,9 @@ for ch in subject["chapters"]:
         if q["type"] == "type1":
             assert "options" in q, "선택지 없음"
             assert "answer" in q, "정답 없음"
-            assert 1 <= q["answer"] <= len(q["options"]), f"정답 범위 오류: {q['answer']}"
+            assert (
+                1 <= q["answer"] <= len(q["options"])
+            ), f"정답 범위 오류: {q['answer']}"
         else:
             assert "answer" in q, "빈칸 정답 없음"
 
@@ -103,7 +105,7 @@ for check_class, desc in css_checks:
 
 # 5. 서버 접근 확인
 print("\n[5] 서버 접근 확인")
-import urllib.request
+import urllib.request  # noqa: E402
 try:
     response = urllib.request.urlopen("http://localhost:8000/")
     assert response.status == 200, f"메인 페이지 오류: {response.status}"
