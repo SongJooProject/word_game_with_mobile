@@ -8,6 +8,7 @@ let currentQuestion = 0;
 let score = 0;
 let correctAnswers = 0;
 let wrongAnswers = 0;
+let questionWrongCount = 0;
 let startTime = null;
 let timerInterval = null;
 
@@ -16,6 +17,20 @@ window.addEventListener('load', async () => {
     await loadQuestions();
     renderSubjectList();
     renderMenu();
+    
+    // 이벤트 리스너 등록
+    document.querySelectorAll('.type-btn').forEach(btn => {
+        btn.addEventListener('click', () => selectGameType(btn.dataset.type, btn));
+    });
+    
+    document.getElementById('btn-start').addEventListener('click', startGame);
+    document.getElementById('btn-back').addEventListener('click', backToMenu);
+    document.getElementById('submit-btn').addEventListener('click', checkAnswer);
+    document.getElementById('next-btn').addEventListener('click', nextQuestion);
+    document.getElementById('btn-restart').addEventListener('click', restartGame);
+    document.getElementById('menu-toggle').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.toggle('open');
+    });
 });
 
 // 과목 목록 렌더링
@@ -32,21 +47,21 @@ function renderSubjectList() {
         const item = document.createElement('div');
         item.className = 'menu-item subject-item';
         item.textContent = subject.name;
-        item.onclick = () => selectSubject(subject);
+        item.addEventListener('click', () => selectSubject(subject, item));
         container.appendChild(item);
     });
 }
 
 // 과목 선택
-function selectSubject(subject) {
+function selectSubject(subject, element) {
     currentSubject = subject;
-    document.getElementById('page-title').textContent = subject.name;
+    document.getElementById('page-title').textContent = `📖 ${subject.name}`;
     
     // 사이드바 활성화 표시
     document.querySelectorAll('.subject-item').forEach(item => {
         item.classList.remove('active');
     });
-    event.currentTarget.classList.add('active');
+    element.classList.add('active');
     
     renderMenu();
     document.getElementById('sidebar').classList.remove('open');
@@ -83,7 +98,7 @@ function renderMenu() {
         const allBtn = document.createElement('button');
         allBtn.className = 'section-btn all-btn';
         allBtn.innerHTML = `🎯 전체 <span class="count">(${chapter.questions.length})</span>`;
-        allBtn.onclick = () => selectSection(chapter, null, allBtn);
+        allBtn.addEventListener('click', () => selectSection(chapter, null, allBtn));
         sectionList.appendChild(allBtn);
         
         sections.forEach(section => {
@@ -91,7 +106,7 @@ function renderMenu() {
             const btn = document.createElement('button');
             btn.className = 'section-btn';
             btn.innerHTML = `📌 ${section} <span class="count">(${count})</span>`;
-            btn.onclick = () => selectSection(chapter, section, btn);
+            btn.addEventListener('click', () => selectSection(chapter, section, btn));
             sectionList.appendChild(btn);
         });
         
@@ -136,10 +151,10 @@ function backToMenu() {
 }
 
 // 게임 유형 선택
-function selectGameType(type) {
+function selectGameType(type, element) {
     gameType = type;
     document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('selected'));
-    event.currentTarget.classList.add('selected');
+    element.classList.add('selected');
 }
 
 // 게임 시작
@@ -206,6 +221,8 @@ function showQuestion() {
     const inputsEl = document.getElementById('inputs');
     const messageEl = document.getElementById('message');
     
+    questionWrongCount = 0;
+    
     document.getElementById('question-num').textContent = currentQuestion + 1;
     document.getElementById('question-num-display').textContent = `${currentQuestion + 1}번`;
     document.getElementById('question-type-display').textContent = q.type === 'type1' ? '🔘 선택형' : '✏️ 빈칸형';
@@ -220,7 +237,7 @@ function showQuestion() {
             const btn = document.createElement('button');
             btn.className = 'option-btn';
             btn.textContent = `${i + 1}. ${option}`;
-            btn.onclick = () => checkType1Answer(i + 1);
+            btn.addEventListener('click', () => checkType1Answer(i + 1));
             inputsEl.appendChild(btn);
         });
         
@@ -233,7 +250,7 @@ function showQuestion() {
         });
         
         sentenceEl.innerHTML = displayQuestion;
-        hintEl.textContent = `정답: ${q.answer}`;
+        hintEl.textContent = blanks.length > 0 ? `${blanks.length}개의 빈칸을 채워주세요` : '';
         inputsEl.innerHTML = '';
         inputsEl.style.display = 'flex';
         
@@ -254,6 +271,8 @@ function showQuestion() {
     card.style.animation = 'none';
     card.offsetHeight;
     card.style.animation = 'slideIn 0.3s ease';
+    
+    updateProgress();
     
     if (q.type === 'type2') {
         const firstInput = document.getElementById('answer-0');
@@ -281,7 +300,7 @@ function checkType1Answer(selected) {
         messageEl.className = 'message correct';
     } else {
         wrongAnswers++;
-        messageEl.textContent = `😅 틀렸습니다. 정답: ${q.answer}번`;
+        messageEl.textContent = `😅 틀렸습니다. 정답은 ${q.answer}번이에요`;
         messageEl.className = 'message wrong';
     }
     
@@ -297,8 +316,14 @@ function checkAnswer() {
     if (!input) return;
     
     const userAnswer = input.value.trim();
+    if (!userAnswer) {
+        messageEl.textContent = '정답을 입력해주세요!';
+        return;
+    }
+    
     const isCorrect = userAnswer === q.answer;
     const messageEl = document.getElementById('message');
+    const hintEl = document.getElementById('hint');
     
     if (isCorrect) {
         correctAnswers++;
@@ -306,16 +331,31 @@ function checkAnswer() {
         messageEl.textContent = '🎉 정답입니다!';
         messageEl.className = 'message correct';
         input.classList.add('correct');
+        input.disabled = true;
+        document.getElementById('submit-btn').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'inline-block';
     } else {
+        questionWrongCount++;
         wrongAnswers++;
-        messageEl.textContent = `😅 틀렸습니다. 정답: ${q.answer}`;
-        messageEl.className = 'message wrong';
         input.classList.add('wrong');
+        input.value = '';
+        input.classList.remove('wrong');
+        input.focus();
+        
+        if (questionWrongCount >= 3) {
+            messageEl.textContent = `😅 3번 틀렸습니다. 정답은 "${q.answer}"이에요`;
+            messageEl.className = 'message wrong';
+            hintEl.textContent = `💡 다음 문제에서 더 잘할 수 있어요!`;
+            input.disabled = true;
+            document.getElementById('submit-btn').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'inline-block';
+        } else {
+            messageEl.textContent = `😅 틀렸습니다. (${questionWrongCount}/3) 다시 시도해보세요!`;
+            messageEl.className = 'message wrong';
+        }
     }
     
     document.getElementById('score').textContent = score;
-    document.getElementById('submit-btn').style.display = 'none';
-    document.getElementById('next-btn').style.display = 'inline-block';
     updateAccuracy();
 }
 
@@ -352,11 +392,6 @@ function restartGame() {
     document.getElementById('stats').style.display = 'none';
     backToMenu();
 }
-
-// 사이드바 토글
-document.getElementById('menu-toggle').addEventListener('click', () => {
-    document.getElementById('sidebar').classList.toggle('open');
-});
 
 // 키보드
 document.addEventListener('keydown', (e) => {

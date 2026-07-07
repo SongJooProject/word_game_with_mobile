@@ -6,7 +6,7 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
-    background: #ffffff;
+    background: #f7f6f3;
     min-height: 100vh;
     color: #37352f;
 }
@@ -19,7 +19,7 @@ body {
 /* Sidebar - Notion Style */
 .sidebar {
     width: 240px;
-    background: #fbfbfa;
+    background: #f7f6f3;
     border-right: 1px solid #e9e9e7;
     padding: 12px 8px;
     display: flex;
@@ -146,6 +146,7 @@ body {
     border: 1px solid #e9e9e7;
     border-radius: 8px;
     padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .chapter-header {
@@ -171,7 +172,7 @@ body {
 
 .section-btn {
     padding: 8px 16px;
-    background: #ffffff;
+    background: #f7f6f3;
     border: 1px solid #e9e9e7;
     border-radius: 6px;
     cursor: pointer;
@@ -185,7 +186,7 @@ body {
 }
 
 .section-btn:hover {
-    background: #f7f6f3;
+    background: #ebebea;
     border-color: #d3d1cb;
 }
 
@@ -201,12 +202,12 @@ body {
 }
 
 .all-btn {
-    background: #f1f1ef;
+    background: #ebebea;
     border-color: #d3d1cb;
 }
 
 .all-btn:hover {
-    background: #e8e8e5;
+    background: #d3d1cb;
 }
 
 /* Game Type Selector */
@@ -229,7 +230,7 @@ body {
 
 .type-btn {
     flex: 1;
-    background: #ffffff;
+    background: #f7f6f3;
     border: 1px solid #e9e9e7;
     padding: 20px 16px;
     border-radius: 8px;
@@ -242,7 +243,7 @@ body {
 }
 
 .type-btn:hover {
-    background: #f7f6f3;
+    background: #ebebea;
     border-color: #d3d1cb;
 }
 
@@ -262,11 +263,11 @@ body {
 }
 
 .selected-info {
-    color: #9b9a97;
+    color: #64636a;
     font-size: 0.9em;
     text-align: center;
     padding: 12px 20px;
-    background: #f7f6f3;
+    background: #f1f1ef;
     border-radius: 6px;
     width: 100%;
 }
