@@ -116,6 +116,20 @@ body {
     font-weight: 700;
 }
 
+.home-btn {
+    background: none;
+    border: 1px solid #e9e9e7;
+    border-radius: 6px;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 6px 10px;
+    transition: all 0.15s ease;
+}
+
+.home-btn:hover {
+    background: #f1f1ef;
+}
+
 .score-board {
     display: flex;
     gap: 20px;

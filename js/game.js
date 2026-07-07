@@ -26,6 +26,7 @@ window.addEventListener('load', async () => {
     
     document.getElementById('btn-start').addEventListener('click', startGame);
     document.getElementById('btn-back').addEventListener('click', backToMenu);
+    document.getElementById('home-btn').addEventListener('click', backToMenu);
     document.getElementById('submit-btn').addEventListener('click', checkAnswer);
     document.getElementById('next-btn').addEventListener('click', nextQuestion);
     document.getElementById('btn-restart').addEventListener('click', restartGame);
@@ -151,6 +152,7 @@ function backToMenu() {
     document.getElementById('stats').style.display = 'none';
     document.getElementById('progress-container').style.display = 'none';
     document.getElementById('progress-bar').style.width = '0%';
+    document.getElementById('home-btn').style.display = 'none';
 }
 
 // 게임 유형 선택
@@ -193,6 +195,7 @@ function startGame() {
     document.getElementById('game-area').style.display = 'flex';
     document.getElementById('stats').style.display = 'flex';
     document.getElementById('progress-container').style.display = 'block';
+    document.getElementById('home-btn').style.display = 'inline-block';
     
     showQuestion();
 }
