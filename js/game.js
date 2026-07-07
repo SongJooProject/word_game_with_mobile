@@ -3,6 +3,7 @@ let currentSubject = null;
 let selectedChapter = null;
 let selectedSection = null;
 let gameType = 'all';
+let allQuestions = [];
 let questions = [];
 let currentQuestion = 0;
 let score = 0;
@@ -126,10 +127,11 @@ function selectSection(chapter, section, btn) {
     
     // 문제 필터링
     if (section) {
-        questions = chapter.questions.filter(q => q.section === section);
+        allQuestions = chapter.questions.filter(q => q.section === section);
     } else {
-        questions = [...chapter.questions];
+        allQuestions = [...chapter.questions];
     }
+    questions = [...allQuestions];
     
     // 게임 유형 선택 표시
     document.getElementById('single-page-menu').style.display = 'none';
@@ -142,6 +144,7 @@ function selectSection(chapter, section, btn) {
 
 // 메뉴로 돌아가기
 function backToMenu() {
+    questions = [...allQuestions];
     document.getElementById('single-page-menu').style.display = 'block';
     document.getElementById('game-type-selector').style.display = 'none';
     document.getElementById('game-area').style.display = 'none';
@@ -159,20 +162,20 @@ function selectGameType(type, element) {
 
 // 게임 시작
 function startGame() {
-    let filteredQuestions = [...questions];
+    let gameQuestions = [...allQuestions];
     
     if (gameType === 'type1') {
-        filteredQuestions = questions.filter(q => q.type === 'type1');
+        gameQuestions = allQuestions.filter(q => q.type === 'type1');
     } else if (gameType === 'type2') {
-        filteredQuestions = questions.filter(q => q.type === 'type2');
+        gameQuestions = allQuestions.filter(q => q.type === 'type2');
     }
     
-    if (filteredQuestions.length === 0) {
+    if (gameQuestions.length === 0) {
         alert('선택한 유형의 문제가 없습니다.');
         return;
     }
     
-    questions = filteredQuestions;
+    questions = gameQuestions;
     currentQuestion = 0;
     score = 0;
     correctAnswers = 0;
