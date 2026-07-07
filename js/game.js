@@ -58,39 +58,39 @@ function renderMenu() {
     container.innerHTML = '';
     
     if (!currentSubject || !currentSubject.chapters) {
-        container.innerHTML = '<p class="no-data">과목을 선택해주세요.</p>';
+        container.innerHTML = '<p class="no-data">📚 과목을 선택해주세요</p>';
         return;
     }
+    
+    const chapterEmojis = ['📋', '📑'];
     
     currentSubject.chapters.forEach((chapter, chapterIdx) => {
         const chapterDiv = document.createElement('div');
         chapterDiv.className = 'chapter-block';
         
-        // 챕터 헤더
+        const emoji = chapterEmojis[chapterIdx % chapterEmojis.length];
+        
         const header = document.createElement('div');
         header.className = 'chapter-header';
-        header.innerHTML = `<h3>${chapter.name}</h3>`;
+        header.innerHTML = `<h3>${emoji} ${chapter.name}</h3>`;
         chapterDiv.appendChild(header);
         
-        // 섹션 목록
         const sections = [...new Set(chapter.questions.map(q => q.section).filter(s => s))];
         
         const sectionList = document.createElement('div');
         sectionList.className = 'section-list';
         
-        // 전체 선택
         const allBtn = document.createElement('button');
         allBtn.className = 'section-btn all-btn';
-        allBtn.innerHTML = `전체 <span class="count">(${chapter.questions.length})</span>`;
+        allBtn.innerHTML = `🎯 전체 <span class="count">(${chapter.questions.length})</span>`;
         allBtn.onclick = () => selectSection(chapter, null, allBtn);
         sectionList.appendChild(allBtn);
         
-        // 각 섹션
         sections.forEach(section => {
             const count = chapter.questions.filter(q => q.section === section).length;
             const btn = document.createElement('button');
             btn.className = 'section-btn';
-            btn.innerHTML = `${section} <span class="count">(${count})</span>`;
+            btn.innerHTML = `📌 ${section} <span class="count">(${count})</span>`;
             btn.onclick = () => selectSection(chapter, section, btn);
             sectionList.appendChild(btn);
         });
@@ -122,7 +122,7 @@ function selectSection(chapter, section, btn) {
     
     // 선택 정보 표시
     const info = document.getElementById('selected-info');
-    info.innerHTML = `<strong>${chapter.name}</strong>${section ? ' > ' + section : ' (전체)'} - ${questions.length}문제`;
+    info.innerHTML = `📚 <strong>${chapter.name}</strong>${section ? ' > 📌 ' + section : ' > 🎯 전체'} - ${questions.length}문제`;
 }
 
 // 메뉴로 돌아가기
@@ -208,7 +208,7 @@ function showQuestion() {
     
     document.getElementById('question-num').textContent = currentQuestion + 1;
     document.getElementById('question-num-display').textContent = `${currentQuestion + 1}번`;
-    document.getElementById('question-type-display').textContent = q.type === 'type1' ? '선택형' : '빈칸형';
+    document.getElementById('question-type-display').textContent = q.type === 'type1' ? '🔘 선택형' : '✏️ 빈칸형';
     
     if (q.type === 'type1') {
         sentenceEl.textContent = q.question;
@@ -277,11 +277,11 @@ function checkType1Answer(selected) {
     if (isCorrect) {
         correctAnswers++;
         score += 10;
-        messageEl.textContent = '정답입니다!';
+        messageEl.textContent = '🎉 정답입니다!';
         messageEl.className = 'message correct';
     } else {
         wrongAnswers++;
-        messageEl.textContent = `틀렸습니다. 정답: ${q.answer}번`;
+        messageEl.textContent = `😅 틀렸습니다. 정답: ${q.answer}번`;
         messageEl.className = 'message wrong';
     }
     
@@ -303,12 +303,12 @@ function checkAnswer() {
     if (isCorrect) {
         correctAnswers++;
         score += 10;
-        messageEl.textContent = '정답입니다!';
+        messageEl.textContent = '🎉 정답입니다!';
         messageEl.className = 'message correct';
         input.classList.add('correct');
     } else {
         wrongAnswers++;
-        messageEl.textContent = `틀렸습니다. 정답: ${q.answer}`;
+        messageEl.textContent = `😅 틀렸습니다. 정답: ${q.answer}`;
         messageEl.className = 'message wrong';
         input.classList.add('wrong');
     }

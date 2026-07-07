@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>법률 용어 게임</title>
+    <title>📚 법률 용어 게임</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="app">
         <aside class="sidebar" id="sidebar">
-            <h2>과목 선택</h2>
+            <h2>📚 과목</h2>
             <div class="subject-list" id="subject-list"></div>
         </aside>
 
@@ -17,10 +17,10 @@
 
         <main class="main">
             <header class="header">
-                <h1 id="page-title">형사소송법</h1>
+                <h1 id="page-title">📖 형사소송법</h1>
                 <div class="score-board">
-                    <span>점수: <strong id="score">0</strong></span>
-                    <span>문제: <strong id="question-num">0</strong> / <strong id="total">0</strong></span>
+                    <span>⭐ 점수: <strong id="score">0</strong></span>
+                    <span>📝 문제: <strong id="question-num">0</strong> / <strong id="total">0</strong></span>
                 </div>
             </header>
 
@@ -28,33 +28,30 @@
                 <div class="progress-bar" id="progress-bar"></div>
             </div>
 
-            <!-- 한 페이지 메뉴 -->
             <div class="single-page-menu" id="single-page-menu">
                 <div class="chapter-section" id="chapter-section"></div>
             </div>
 
-            <!-- 게임 유형 선택 -->
             <div class="game-type-selector" id="game-type-selector" style="display:none;">
                 <div class="type-buttons">
                     <button class="type-btn selected" onclick="selectGameType('type1')">
-                        <span class="type-icon">①②③</span>
+                        <span class="type-icon">🔘</span>
                         <span class="type-label">선택형</span>
                     </button>
                     <button class="type-btn" onclick="selectGameType('type2')">
-                        <span class="type-icon">__</span>
+                        <span class="type-icon">✏️</span>
                         <span class="type-label">빈칸형</span>
                     </button>
                     <button class="type-btn" onclick="selectGameType('all')">
-                        <span class="type-icon">ALL</span>
+                        <span class="type-icon">🎯</span>
                         <span class="type-label">전체</span>
                     </button>
                 </div>
                 <div class="selected-info" id="selected-info"></div>
-                <button class="btn-start" onclick="startGame()">게임 시작</button>
-                <button class="btn-back-small" onclick="backToMenu()">메뉴로 돌아가기</button>
+                <button class="btn-start" onclick="startGame()">🚀 게임 시작</button>
+                <button class="btn-back-small" onclick="backToMenu()">← 메뉴로 돌아가기</button>
             </div>
 
-            <!-- 게임 영역 -->
             <div class="game-area" id="game-area" style="display:none;">
                 <div class="question-card" id="question-card">
                     <div class="question-header">
@@ -65,50 +62,48 @@
                     <div class="hint" id="hint"></div>
                     <div class="inputs" id="inputs"></div>
                     <div class="buttons">
-                        <button id="submit-btn" class="btn-primary" onclick="checkAnswer()">정답 확인</button>
-                        <button id="next-btn" class="btn-secondary" onclick="nextQuestion()" style="display:none;">다음 문제</button>
+                        <button id="submit-btn" class="btn-primary" onclick="checkAnswer()">✅ 정답 확인</button>
+                        <button id="next-btn" class="btn-secondary" onclick="nextQuestion()" style="display:none;">다음 문제 →</button>
                     </div>
                     <div class="message" id="message"></div>
                 </div>
             </div>
 
-            <!-- 통계 -->
             <div class="stats" id="stats" style="display:none;">
                 <div class="stat-item">
-                    <span>정답률:</span>
+                    <span>📊 정답률:</span>
                     <strong id="accuracy">0%</strong>
                 </div>
                 <div class="stat-item">
-                    <span>소요 시간:</span>
+                    <span>⏱️ 소요 시간:</span>
                     <strong id="time">00:00</strong>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- 결과 모달 -->
     <div class="result-modal" id="result-modal" style="display:none;">
         <div class="result-content">
-            <h2>게임 종료!</h2>
+            <h2>🎉 게임 종료!</h2>
             <div class="final-score">
-                <span>최종 점수</span>
+                <span>🏆 최종 점수</span>
                 <strong id="final-score">0</strong>
             </div>
             <div class="result-stats">
                 <div class="stat">
-                    <span>정답:</span>
+                    <span>✅ 정답:</span>
                     <strong id="correct-count">0</strong>
                 </div>
                 <div class="stat">
-                    <span>오답:</span>
+                    <span>❌ 오답:</span>
                     <strong id="wrong-count">0</strong>
                 </div>
                 <div class="stat">
-                    <span>정답률:</span>
+                    <span>📊 정답률:</span>
                     <strong id="final-accuracy">0%</strong>
                 </div>
             </div>
-            <button class="btn-restart" onclick="restartGame()">다시 하기</button>
+            <button class="btn-restart" onclick="restartGame()">🔄 다시 하기</button>
         </div>
     </div>
 
