@@ -254,11 +254,13 @@ function showQuestion() {
         inputsEl.innerHTML = '';
         inputsEl.style.display = 'flex';
         
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.id = 'answer-0';
-        input.placeholder = '정답 입력';
-        inputsEl.appendChild(input);
+        blanks.forEach((blank, i) => {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.id = `answer-${i}`;
+            input.placeholder = `(${i + 1})번 답 입력`;
+            inputsEl.appendChild(input);
+        });
         
         document.getElementById('submit-btn').style.display = 'inline-block';
     }
@@ -312,41 +314,75 @@ function checkType1Answer(selected) {
 // 빈칸형 답 확인
 function checkAnswer() {
     const q = questions[currentQuestion];
-    const input = document.getElementById('answer-0');
-    if (!input) return;
-    
-    const userAnswer = input.value.trim();
-    if (!userAnswer) {
-        messageEl.textContent = '정답을 입력해주세요!';
-        return;
-    }
-    
-    const isCorrect = userAnswer === q.answer;
+    const blanks = q.question.match(/<[^>]+>/g) || [];
     const messageEl = document.getElementById('message');
     const hintEl = document.getElementById('hint');
     
-    if (isCorrect) {
+    const userAnswers = [];
+    let allFilled = true;
+    
+    blanks.forEach((_, i) => {
+        const input = document.getElementById(`answer-${i}`);
+        if (input) {
+            const val = input.value.trim();
+            if (!val) allFilled = false;
+            userAnswers.push(val);
+        }
+    });
+    
+    if (!allFilled) {
+        messageEl.textContent = '모든 빈칸을 입력해주세요!';
+        messageEl.className = 'message wrong';
+        return;
+    }
+    
+    const correctAnsArr = q.answer.split('|').map(a => a.trim());
+    let allCorrect = true;
+    
+    blanks.forEach((_, i) => {
+        const input = document.getElementById(`answer-${i}`);
+        const userAns = userAnswers[i];
+        const correctAns = correctAnsArr[i];
+        
+        if (userAns === correctAns) {
+            input.classList.add('correct');
+            input.disabled = true;
+        } else {
+            input.classList.add('wrong');
+            allCorrect = false;
+        }
+    });
+    
+    if (allCorrect) {
         correctAnswers++;
         score += 10;
         messageEl.textContent = '🎉 정답입니다!';
         messageEl.className = 'message correct';
-        input.classList.add('correct');
-        input.disabled = true;
         document.getElementById('submit-btn').style.display = 'none';
         document.getElementById('next-btn').style.display = 'inline-block';
     } else {
         questionWrongCount++;
         wrongAnswers++;
-        input.classList.add('wrong');
-        input.value = '';
-        input.classList.remove('wrong');
-        input.focus();
+        
+        blanks.forEach((_, i) => {
+            const input = document.getElementById(`answer-${i}`);
+            if (!input.classList.contains('correct')) {
+                input.value = '';
+                input.classList.remove('wrong');
+                input.disabled = false;
+                input.focus();
+            }
+        });
         
         if (questionWrongCount >= 3) {
-            messageEl.textContent = `😅 3번 틀렸습니다. 정답은 "${q.answer}"이에요`;
+            let ansText = correctAnsArr.join(', ');
+            messageEl.textContent = `😅 3번 틀렸습니다. 정답은 "${ansText}"이에요`;
             messageEl.className = 'message wrong';
             hintEl.textContent = `💡 다음 문제에서 더 잘할 수 있어요!`;
-            input.disabled = true;
+            blanks.forEach((_, i) => {
+                const input = document.getElementById(`answer-${i}`);
+                input.disabled = true;
+            });
             document.getElementById('submit-btn').style.display = 'none';
             document.getElementById('next-btn').style.display = 'inline-block';
         } else {
