@@ -214,6 +214,14 @@ function updateProgress() {
     document.getElementById('progress-bar').style.width = `${progress}%`;
 }
 
+// 빈칸 힌트 생성 함수 (글자→O, 공백→공백)
+function getBlankHint(answer) {
+    return answer.split('').map(char => {
+        if (char === ' ') return ' ';
+        return 'O';
+    }).join('');
+}
+
 // 문제 표시
 function showQuestion() {
     if (currentQuestion >= questions.length) {
@@ -260,11 +268,14 @@ function showQuestion() {
         inputsEl.innerHTML = '';
         inputsEl.style.display = 'flex';
         
+        const answerParts = q.answer.split('|');
+        
         blanks.forEach((blank, i) => {
             const input = document.createElement('input');
             input.type = 'text';
             input.id = `answer-${i}`;
-            input.placeholder = `(${i + 1})번 답 입력`;
+            const hint = getBlankHint(answerParts[i] || '');
+            input.placeholder = `(${i + 1})번 답 입력: ${hint}`;
             inputsEl.appendChild(input);
         });
         
