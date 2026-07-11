@@ -29,3 +29,7 @@
 - repo visibility/Pages 설정은 **건드리지 말 것** (다시 깨짐)
 - 코드 수정 시 `questions.json` 평문을 repo에 커밋하지 않도록 주의
 - 새로운 보안 로직 추가 시 기존 Fernet/비밀번호 방식과 호환 유지
+
+## OpenCode 위임 표준 프롬프트 (Hermes가 항상 포함)
+위임할 때 아래 문구를 프롬프트 끝에 반드시 붙일 것:
+> "작업 중 결정/배포/보안/DB갱신/에러해결/설정변경/학습이 있으면 **세션 끝나기 전에 무조건 LLM Wiki에 자동 Ingest**하라. 체크리스트: (1) 자동 대상 다뤘는가? (2) @llm-wiki 호출해 source/entity/synthesis 생성 (3) index.md/log.md/overview.md 갱신. 갱신 안 됐으면 세션 종료 금지. wiki 경로/규칙은 ~/.config/opencode/AGENTS.md 참조."
