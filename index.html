@@ -11,6 +11,18 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!-- Lock Screen Overlay -->
+    <div class="lock-overlay" id="lock-overlay">
+        <div class="lock-box">
+            <div class="lock-icon">🔒</div>
+            <h2>법률 용어 게임</h2>
+            <p>비밀번호를 입력하세요</p>
+            <input type="password" id="lock-password" placeholder="비밀번호" autocomplete="off">
+            <div class="lock-error" id="lock-error"></div>
+            <button class="lock-submit" id="lock-submit">입장</button>
+        </div>
+    </div>
+
     <div class="app">
         <aside class="sidebar" id="sidebar">
             <h2>📚 과목</h2>
@@ -114,19 +126,6 @@
         </div>
     </div>
 
-    <script>
-        let questionsData = null;
-        
-        async function loadQuestions() {
-            try {
-                const response = await fetch('data/questions.json');
-                questionsData = await response.json();
-            } catch (e) {
-                console.error('문제 로딩 실패:', e);
-                alert('문제 파일을 불러올 수 없습니다.');
-            }
-        }
-    </script>
     <script src="js/game.js"></script>
     <script>
         if ('serviceWorker' in navigator) {

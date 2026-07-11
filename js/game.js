@@ -1,4 +1,5 @@
 // 상태 관리
+let questionsData = null;
 let currentSubject = null;
 let selectedChapter = null;
 let selectedSection = null;
@@ -13,34 +14,141 @@ let questionWrongCount = 0;
 let startTime = null;
 let timerInterval = null;
 
-// 초기화
-window.addEventListener('load', async () => {
-    // Service Worker 등록
-    if ('serviceWorker' in navigator) {
+// ─── Fernet 복호화 ──────────────────────────────────────────────
+
+function base64UrlToBytes(str) {
+    str = str.replace(/-/g, "+").replace(/_/g, "/");
+    while (str.length % 4 !== 0) str += "=";
+    var binary = atob(str);
+    var bytes = new Uint8Array(binary.length);
+    for (var i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
+}
+
+async function deriveFernetKey(password) {
+    var encoder = new TextEncoder();
+    var hash = await crypto.subtle.digest("SHA-256", encoder.encode(password));
+    return new Uint8Array(hash);
+}
+
+async function fernetDecrypt(token, password) {
+    var keyBytes = await deriveFernetKey(password);
+    var signingKey = keyBytes.slice(0, 16);
+    var encryptionKey = keyBytes.slice(16, 32);
+
+    var data = base64UrlToBytes(token);
+
+    if (data[0] !== 0x80) throw new Error("Invalid token");
+
+    var iv = data.slice(9, 25);
+    var ciphertext = data.slice(25, data.length - 32);
+    var hmacSig = data.slice(data.length - 32);
+    var hmacData = data.slice(0, data.length - 32);
+
+    var hmacCryptoKey = await crypto.subtle.importKey(
+        "raw", signingKey,
+        { name: "HMAC", hash: "SHA-256" },
+        false, ["verify"]
+    );
+
+    var valid = await crypto.subtle.verify("HMAC", hmacCryptoKey, hmacSig, hmacData);
+    if (!valid) throw new Error("WRONG_PASSWORD");
+
+    var aesCryptoKey = await crypto.subtle.importKey(
+        "raw", encryptionKey,
+        { name: "AES-CBC" },
+        false, ["decrypt"]
+    );
+
+    var decrypted = await crypto.subtle.decrypt(
+        { name: "AES-CBC", iv: iv },
+        aesCryptoKey, ciphertext
+    );
+
+    var decoder = new TextDecoder();
+    return JSON.parse(decoder.decode(decrypted));
+}
+
+// ─── 잠금 화면 ──────────────────────────────────────────────────
+
+var lockAttempts = 0;
+
+function setupLockScreen() {
+    document.getElementById("lock-submit").addEventListener("click", handleUnlock);
+    document.getElementById("lock-password").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") handleUnlock();
+    });
+    setTimeout(function () {
+        document.getElementById("lock-password").focus();
+    }, 300);
+}
+
+async function handleUnlock() {
+    var password = document.getElementById("lock-password").value;
+    var errorEl = document.getElementById("lock-error");
+
+    if (!password) {
+        errorEl.textContent = "비밀번호를 입력하세요.";
+        return;
+    }
+
+    lockAttempts++;
+    errorEl.textContent = "";
+
+    try {
+        var response = await fetch("data/questions.enc");
+        if (!response.ok) throw new Error("NETWORK_ERROR");
+        var token = await response.text();
+
+        questionsData = await fernetDecrypt(token, password);
+
+        document.getElementById("lock-overlay").style.display = "none";
+        renderSubjectList();
+        renderMenu();
+    } catch (e) {
+        if (e.message === "NETWORK_ERROR") {
+            errorEl.textContent = "문제 파일을 불러올 수 없습니다.";
+        } else {
+            if (lockAttempts >= 3) {
+                errorEl.textContent = "3회 시도 초과. 페이지를 새로고침 해주세요.";
+                document.getElementById("lock-submit").disabled = true;
+                document.getElementById("lock-password").disabled = true;
+            } else {
+                errorEl.textContent = "비밀번호가 틀렸습니다. (" + lockAttempts + "/3)";
+                document.getElementById("lock-password").value = "";
+                document.getElementById("lock-password").focus();
+            }
+        }
+    }
+}
+
+// ─── 초기화 ─────────────────────────────────────────────────────
+
+window.addEventListener("load", async function () {
+    if ("serviceWorker" in navigator) {
         try {
-            await navigator.serviceWorker.register('sw.js');
+            await navigator.serviceWorker.register("sw.js");
         } catch (e) {
-            console.log('SW registration failed:', e);
+            console.log("SW registration failed:", e);
         }
     }
 
-    await loadQuestions();
-    renderSubjectList();
-    renderMenu();
-    
-    // 이벤트 리스너 등록
-    document.querySelectorAll('.type-btn').forEach(btn => {
-        btn.addEventListener('click', () => selectGameType(btn.dataset.type, btn));
+    setupLockScreen();
+
+    document.querySelectorAll(".type-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () { selectGameType(btn.dataset.type, btn); });
     });
-    
-    document.getElementById('btn-start').addEventListener('click', startGame);
-    document.getElementById('btn-back').addEventListener('click', backToMenu);
-    document.getElementById('home-btn').addEventListener('click', backToMenu);
-    document.getElementById('submit-btn').addEventListener('click', checkAnswer);
-    document.getElementById('next-btn').addEventListener('click', nextQuestion);
-    document.getElementById('btn-restart').addEventListener('click', restartGame);
-    document.getElementById('menu-toggle').addEventListener('click', toggleSidebar);
-    document.getElementById('sidebar-overlay').addEventListener('click', closeSidebar);
+
+    document.getElementById("btn-start").addEventListener("click", startGame);
+    document.getElementById("btn-back").addEventListener("click", backToMenu);
+    document.getElementById("home-btn").addEventListener("click", backToMenu);
+    document.getElementById("submit-btn").addEventListener("click", checkAnswer);
+    document.getElementById("next-btn").addEventListener("click", nextQuestion);
+    document.getElementById("btn-restart").addEventListener("click", restartGame);
+    document.getElementById("menu-toggle").addEventListener("click", toggleSidebar);
+    document.getElementById("sidebar-overlay").addEventListener("click", closeSidebar);
 });
 
 // 과목 목록 렌더링

@@ -35,12 +35,12 @@ self.addEventListener('activate', function(event) {
 
 self.addEventListener('fetch', function(event) {
   var requestUrl = event.request.url;
-  var isDataJson = requestUrl.indexOf('/data/') !== -1 && requestUrl.indexOf('.json') !== -1;
+  var isDataEnc = requestUrl.indexOf('questions.enc') !== -1;
   var isStatic = STATIC_ASSETS.some(function(asset) {
     return requestUrl.indexOf(asset) !== -1;
   });
 
-  if (isDataJson) {
+  if (isDataEnc) {
     event.respondWith(
       caches.open(CACHE_NAME).then(function(cache) {
         return cache.match(event.request).then(function(cachedResponse) {
