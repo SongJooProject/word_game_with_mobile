@@ -15,6 +15,15 @@ let timerInterval = null;
 
 // 초기화
 window.addEventListener('load', async () => {
+    // Service Worker 등록
+    if ('serviceWorker' in navigator) {
+        try {
+            await navigator.serviceWorker.register('sw.js');
+        } catch (e) {
+            console.log('SW registration failed:', e);
+        }
+    }
+
     await loadQuestions();
     renderSubjectList();
     renderMenu();
@@ -30,9 +39,8 @@ window.addEventListener('load', async () => {
     document.getElementById('submit-btn').addEventListener('click', checkAnswer);
     document.getElementById('next-btn').addEventListener('click', nextQuestion);
     document.getElementById('btn-restart').addEventListener('click', restartGame);
-    document.getElementById('menu-toggle').addEventListener('click', () => {
-        document.getElementById('sidebar').classList.toggle('open');
-    });
+    document.getElementById('menu-toggle').addEventListener('click', toggleSidebar);
+    document.getElementById('sidebar-overlay').addEventListener('click', closeSidebar);
 });
 
 // 과목 목록 렌더링
@@ -66,7 +74,7 @@ function selectSubject(subject, element) {
     element.classList.add('active');
     
     renderMenu();
-    document.getElementById('sidebar').classList.remove('open');
+    closeSidebar();
 }
 
 // 메뉴 렌더링 (한 페이지에 모든 챕터+섹션)
@@ -458,7 +466,20 @@ document.addEventListener('keydown', (e) => {
         if (document.getElementById('game-area').style.display !== 'none') {
             backToMenu();
         } else {
-            document.getElementById('sidebar').classList.toggle('open');
+            toggleSidebar();
         }
     }
 });
+
+// 사이드바 토글
+function toggleSidebar() {
+    var sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('open');
+    document.body.classList.toggle('sidebar-open');
+}
+
+// 사이드바 닫기
+function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.body.classList.remove('sidebar-open');
+}

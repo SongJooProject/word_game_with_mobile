@@ -2,8 +2,12 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#2383e2">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>📚 법률 용어 게임</title>
+    <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -12,6 +16,8 @@
             <h2>📚 과목</h2>
             <div class="subject-list" id="subject-list"></div>
         </aside>
+
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
         <button class="menu-toggle" id="menu-toggle" aria-label="메뉴 열기">☰</button>
 
@@ -122,5 +128,14 @@
         }
     </script>
     <script src="js/game.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(function(err) {
+                    console.log('SW registration failed:', err);
+                });
+            });
+        }
+    </script>
 </body>
 </html>

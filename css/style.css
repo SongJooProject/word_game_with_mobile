@@ -625,32 +625,77 @@ button {
 
 /* Responsive */
 @media (max-width: 768px) {
+    body {
+        min-height: 100dvh;
+        overflow-x: hidden;
+    }
+
+    .app {
+        min-height: 100dvh;
+        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+
+    .main {
+        min-height: 100dvh;
+        padding: 16px;
+        padding-top: calc(16px + env(safe-area-inset-top));
+        padding-bottom: calc(16px + env(safe-area-inset-bottom));
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
     .sidebar {
         position: fixed;
         top: 0;
         left: 0;
         height: 100%;
+        height: 100dvh;
         transform: translateX(-100%);
         z-index: 999;
         background: white;
+        padding-top: calc(12px + env(safe-area-inset-top));
+        padding-bottom: calc(12px + env(safe-area-inset-bottom));
+        padding-left: calc(8px + env(safe-area-inset-left));
+        transition: transform 0.3s ease;
     }
 
     .sidebar.open {
         transform: translateX(0);
     }
 
-    .menu-toggle {
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        height: 100dvh;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 998;
+    }
+
+    .sidebar.open ~ .sidebar-overlay {
         display: block;
     }
 
-    .main {
-        padding: 16px;
+    body.sidebar-open {
+        overflow: hidden;
+    }
+
+    .menu-toggle {
+        display: block;
     }
 
     .header {
         flex-direction: column;
         gap: 12px;
         align-items: flex-start;
+        padding-top: calc(12px + env(safe-area-inset-top));
+    }
+
+    .header h1 {
+        font-size: 1.4em;
     }
 
     .type-buttons {
@@ -663,5 +708,93 @@ button {
 
     .section-btn {
         width: 100%;
+        min-height: 44px;
+        font-size: 1rem;
+        padding: 12px 16px;
+    }
+
+    .menu-item {
+        min-height: 44px;
+        font-size: 1rem;
+        padding: 12px;
+    }
+
+    .type-btn {
+        min-height: 44px;
+        font-size: 1rem;
+        padding: 14px 16px;
+    }
+
+    .inputs input {
+        font-size: 16px;
+        padding: 12px 14px;
+    }
+
+    .option-btn {
+        min-height: 44px;
+        font-size: 1rem;
+        padding: 14px 16px;
+    }
+
+    .btn-start,
+    .btn-restart {
+        min-height: 44px;
+        font-size: 1rem;
+        padding: 14px 20px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        min-height: 44px;
+        font-size: 1rem;
+        padding: 14px 20px;
+    }
+
+    .game-area {
+        max-width: 100%;
+        justify-content: flex-start;
+        padding-top: 16px;
+    }
+
+    .question-card {
+        padding: 20px;
+    }
+
+    .progress-container {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .buttons {
+        position: sticky;
+        bottom: 0;
+        background: #ffffff;
+        padding: 12px 0;
+        gap: 8px;
+    }
+
+    .buttons button {
+        flex: 1;
+    }
+
+    .result-modal .result-content {
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        height: 100dvh;
+        border-radius: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: calc(20px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));
+    }
+
+    .selected-info {
+        font-size: 0.85em;
+    }
+
+    .score-board {
+        font-size: 0.85em;
     }
 }
