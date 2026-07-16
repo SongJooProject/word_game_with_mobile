@@ -3,7 +3,7 @@ let questionsData = null;
 let currentSubject = null;
 let selectedChapter = null;
 let selectedSection = null;
-let gameType = 'all';
+let gameType = 'type1';
 let allQuestions = [];
 let questions = [];
 let currentQuestion = 0;
@@ -104,13 +104,19 @@ async function handleUnlock() {
 
         questionsData = await fernetDecrypt(token, password);
 
+        if (!questionsData || !questionsData.subjects || questionsData.subjects.length === 0) {
+            throw new Error("EMPTY_DATA");
+        }
+
         document.getElementById("lock-overlay").style.display = "none";
         renderSubjectList();
         renderMenu();
     } catch (e) {
         if (e.message === "NETWORK_ERROR") {
             errorEl.textContent = "문제 파일을 불러올 수 없습니다.";
-        } else {
+        } else if (e.message === "EMPTY_DATA") {
+            errorEl.textContent = "문제 데이터가 비어 있습니다.";
+        } else if (e.message === "WRONG_PASSWORD") {
             if (lockAttempts >= 3) {
                 errorEl.textContent = "3회 시도 초과. 페이지를 새로고침 해주세요.";
                 document.getElementById("lock-submit").disabled = true;
@@ -120,19 +126,19 @@ async function handleUnlock() {
                 document.getElementById("lock-password").value = "";
                 document.getElementById("lock-password").focus();
             }
+        } else {
+            errorEl.textContent = "오류가 발생했습니다. (" + e.message + ")";
         }
     }
 }
 
 // ─── 초기화 ─────────────────────────────────────────────────────
 
-window.addEventListener("load", async function () {
+window.addEventListener("load", function () {
     if ("serviceWorker" in navigator) {
-        try {
-            await navigator.serviceWorker.register("sw.js");
-        } catch (e) {
+        navigator.serviceWorker.register("sw.js").catch(function (e) {
             console.log("SW registration failed:", e);
-        }
+        });
     }
 
     setupLockScreen();

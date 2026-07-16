@@ -1,12 +1,12 @@
 const CACHE_NAME = 'CACHE_v1';
 
 const STATIC_ASSETS = [
-  '.',
   'index.html',
   'css/style.css',
   'js/game.js',
   'manifest.webmanifest',
-  'icons/icon.svg'
+  'icons/icon.svg',
+  'data/questions.enc'
 ];
 
 self.addEventListener('install', function(event) {
@@ -45,7 +45,9 @@ self.addEventListener('fetch', function(event) {
       caches.open(CACHE_NAME).then(function(cache) {
         return cache.match(event.request).then(function(cachedResponse) {
           var fetchPromise = fetch(event.request).then(function(networkResponse) {
-            cache.put(event.request, networkResponse.clone());
+            if (networkResponse && networkResponse.ok) {
+              cache.put(event.request, networkResponse.clone());
+            }
             return networkResponse;
           }).catch(function() {
             return cachedResponse;

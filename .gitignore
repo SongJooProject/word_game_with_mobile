@@ -27,3 +27,6 @@ data/questions.json
 .env
 .env.local
 *.env
+
+# analysis temp (contains decrypted plaintext)
+_diag/
