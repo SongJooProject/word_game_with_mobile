@@ -58,8 +58,16 @@ self.addEventListener('fetch', function(event) {
     );
   } else if (isStatic) {
     event.respondWith(
-      caches.match(event.request).then(function(cachedResponse) {
-        return cachedResponse || fetch(event.request);
+      fetch(event.request).then(function(networkResponse) {
+        if (networkResponse && networkResponse.ok) {
+          var clone = networkResponse.clone();
+          caches.open(CACHE_NAME).then(function(cache) {
+            cache.put(event.request, clone);
+          });
+        }
+        return networkResponse;
+      }).catch(function() {
+        return caches.match(event.request);
       })
     );
   } else {
