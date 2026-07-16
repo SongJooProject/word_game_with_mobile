@@ -366,6 +366,7 @@ body {
     font-size: 1.1em;
     color: #37352f;
     line-height: 1.7;
+    white-space: pre-line;
     margin-bottom: 16px;
     padding: 16px;
     background: #f7f6f3;
