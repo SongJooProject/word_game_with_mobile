@@ -129,8 +129,13 @@
     <script src="js/game.js"></script>
     <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js', { scope: '/' });
+      navigator.serviceWorker.register('sw.js', { scope: '/' }).then(function(reg) {
+        reg.update();
+      });
+      var refreshing = false;
       navigator.serviceWorker.addEventListener('controllerchange', function() {
+        if (refreshing) return;
+        refreshing = true;
         window.location.reload();
       });
     }
