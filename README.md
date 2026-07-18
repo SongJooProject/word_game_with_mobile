@@ -75,10 +75,6 @@ python scripts/encrypt_questions.py
 # 4. 커밋 & 푸시 → GitHub Pages 자동 갱신
 git add -A && git commit && git push
 ```
-
-> ⚠️ `data/questions.json`(평문)은 `.gitignore` 대상 — **절대 커밋하지 마세요.**
-> 배포되는 건 암호문 `questions.enc` 뿐입니다.
-
 ## 🔒 보안 모델
 
 - 문제 DATA는 **Fernet 암호화**되어 `questions.enc`로만 배포
