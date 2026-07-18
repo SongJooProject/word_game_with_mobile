@@ -30,3 +30,6 @@ data/questions.json
 
 # analysis temp (contains decrypted plaintext)
 _diag/
+
+# obsolete excel (moved from db, plaintext - do not commit)
+db/*/_old/

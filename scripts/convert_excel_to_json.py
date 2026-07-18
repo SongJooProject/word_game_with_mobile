@@ -115,25 +115,29 @@ def parse_excel_to_questions(excel_path):
 
 
 def main():
-    excel_path = Path("db/DB_수사종결까지.xlsx")
+    db_dir = Path("db/형사소송법")
+    target_files = ["DB_공소제기부터.xlsx", "DB_수사종결까지_new.xlsx"]
     output_path = Path("data/questions.json")
 
     print("=" * 50)
-    print("엑셀 → JSON 변환")
+    print("엑셀(다중 파일) → JSON 변환")
     print("=" * 50)
 
-    if not excel_path.exists():
-        print(f"에러: {excel_path} 파일을 찾을 수 없습니다.")
-        return
-
-    chapters = parse_excel_to_questions(excel_path)
+    all_chapters = []
+    for fname in target_files:
+        excel_path = db_dir / fname
+        if not excel_path.exists():
+            print(f"에러: {excel_path} 파일을 찾을 수 없습니다.")
+            return
+        chapters = parse_excel_to_questions(excel_path)
+        all_chapters.extend(chapters)
 
     # JSON 구조 생성
     data = {
         "subjects": [
             {
                 "name": "형사소송법",
-                "chapters": chapters
+                "chapters": all_chapters
             }
         ]
     }
@@ -143,12 +147,12 @@ def main():
         json.dump(data, f, ensure_ascii=False, indent=2)
 
     # 통계
-    total_q = sum(len(ch["questions"]) for ch in chapters)
+    total_q = sum(len(ch["questions"]) for ch in all_chapters)
     print("\n변환 완료!")
-    print(f"  - 시트(챕터): {len(chapters)}개")
+    print(f"  - 시트(챕터): {len(all_chapters)}개")
     print(f"  - 전체 문제: {total_q}개")
 
-    for ch in chapters:
+    for ch in all_chapters:
         type1_count = sum(1 for q in ch["questions"] if q["type"] == "type1")
         type2_count = sum(1 for q in ch["questions"] if q["type"] == "type2")
         print(f"\n  [{ch['name']}]")
